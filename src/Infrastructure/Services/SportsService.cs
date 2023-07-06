@@ -1,11 +1,11 @@
-﻿using AutoMapper;
-using Data;
-using Infrastructure.InputModels;
-using Microsoft.EntityFrameworkCore;
-using Models;
-
-namespace Infrastructure.Services
+﻿namespace Infrastructure.Services
 {
+    using AutoMapper;
+    using Data;
+    using Infrastructure.InputModels;
+    using Microsoft.EntityFrameworkCore;
+    using Models;
+
     public class SportsService : ISportsService
     {
         private readonly ApplicationDbContext _dbContext;
@@ -41,7 +41,7 @@ namespace Infrastructure.Services
             //    var @event = await _dbContext.Events.FirstOrDefaultAsync(x => x.Id.Equals(currentEvent.Id));
             //    if (@event is not null)
             //    {
-                   
+
             //    }
             //    else
             //    {

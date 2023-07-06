@@ -1,7 +1,7 @@
-﻿using System.Xml.Serialization;
-
-namespace Infrastructure.InputModels
+﻿namespace Infrastructure.InputModels
 {
+    using System.Xml.Serialization;
+
     public class EventInputModel
     {
         [XmlAttribute("ID")]

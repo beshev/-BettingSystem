@@ -1,7 +1,7 @@
-﻿using Infrastructure.InputModels;
-
-namespace Infrastructure.Services
+﻿namespace Infrastructure.Services
 {
+    using Infrastructure.InputModels;
+
     public interface ISportsService
     {
         public Task CreateAsync(SportInputModel model);
