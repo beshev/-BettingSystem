@@ -15,6 +15,6 @@
 
         public virtual Sport Sport { get; set; }
 
-        public ICollection<Match> Matches { get; set; }
+        public virtual ICollection<Match> Matches { get; set; }
     }
 }

@@ -13,6 +13,6 @@
 
         public virtual Match Match { get; set; }
 
-        public ICollection<Odd> Odds { get; set; }
+        public virtual ICollection<Odd> Odds { get; set; }
     }
 }
