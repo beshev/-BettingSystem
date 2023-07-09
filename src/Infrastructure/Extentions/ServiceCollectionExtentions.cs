@@ -2,6 +2,7 @@
 {
     using AutoMapper;
     using Data;
+    using Infrastructure.Events;
     using Infrastructure.Mapping;
     using Infrastructure.Services;
     using Microsoft.EntityFrameworkCore;
@@ -23,6 +24,14 @@
             services.AddTransient<IMatchesService, MatchesService>();
             services.AddTransient<IBetsService, BetsService>();
             services.AddTransient<IOddsService, OddsService>();
+
+            return services;
+        }
+
+        public static IServiceCollection AddEventTriggers(this IServiceCollection services)
+        {
+            services.AddSingleton<IEventPublisher, EventPublisher>();
+            services.AddTransient<IEventSubscriber, EventSubscriber>();
 
             return services;
         }
