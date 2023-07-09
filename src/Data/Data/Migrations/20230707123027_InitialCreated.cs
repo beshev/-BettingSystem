@@ -88,8 +88,8 @@ namespace Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false),
-                    Value = table.Column<double>(type: "float", nullable: false),
-                    SpecialBetValue = table.Column<double>(type: "float", nullable: true),
+                    Value = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SpecialBetValue = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     BetId = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
