@@ -16,7 +16,9 @@ var builder = new HostBuilder()
         .AddHostedService<ApplicationService>()
         .AddDatabase(hostContext.Configuration)
         .AddServices()
-        .AddAutoMapper();
+        .AddAutoMapper()
+        .AddEventTriggers()
+        .AddLogging();
     });
 
 await builder.RunConsoleAsync();

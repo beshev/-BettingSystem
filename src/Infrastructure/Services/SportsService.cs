@@ -2,6 +2,8 @@
 {
     using AutoMapper;
     using Data;
+    using Infrastructure.Events;
+    using Infrastructure.EventsTriggers.EventsModels;
     using Infrastructure.InputModels;
     using Microsoft.EntityFrameworkCore;
     using Models;
@@ -10,14 +12,19 @@
     public class SportsService : ISportsService
     {
         private readonly ApplicationDbContext _dbContext;
+        private readonly IEventPublisher _eventPublisher;
+        private readonly IEventSubscriber _eventSubscriber;
         private readonly IMapper _mapper;
 
         public SportsService(
             ApplicationDbContext dbContext,
-            IEventsService eventsService,
+            IEventPublisher eventPublisher,
+            IEventSubscriber eventSubscriber,
             IMapper mapper)
         {
             _dbContext = dbContext;
+            _eventPublisher = eventPublisher;
+            _eventSubscriber = eventSubscriber;
             _mapper = mapper;
         }
 
@@ -61,16 +68,15 @@
 
                 if (currentMatch is null)
                 {
-                    // To be hidden
-                    ;
+                    _eventPublisher.TriggerEventForHide(oldMatch.Id);
                 }
                 else
                 {
                     if (!currentMatch.StartDate.Equals(oldMatch.StartDate)
                      || !currentMatch.MatchType.Equals(oldMatch.MatchType))
                     {
-                        // Send notification
-                        ;
+                        var updateModel = _mapper.Map<MatchUpdateModel>(currentMatch);
+                        _eventPublisher.TriggerEventForChanges(updateModel);
                     }
 
                     CheckForBetsChanges(oldMatch.Bets, currentMatch.Bets);
@@ -85,15 +91,14 @@
                 var currentBet = newBets.FirstOrDefault(m => m.Id.Equals(oldBet.Id));
                 if (currentBet is null)
                 {
-                    // To be hidden
-                    ;
+                    _eventPublisher.TriggerEventForHide(oldBet.Id);
                 }
                 else
                 {
                     if (!currentBet.IsLive.Equals(oldBet.IsLive))
                     {
-                        // Send notification
-                        ;
+                        var updateModel = _mapper.Map<BetUpdateModel>(currentBet);
+                        _eventPublisher.TriggerEventForChanges(updateModel);
                     }
 
                     CheckForOddsChanges(oldBet.Odds, currentBet.Odds);
@@ -108,15 +113,14 @@
                 var currentOdd = newOdds.FirstOrDefault(m => m.Id.Equals(oldOdd.Id));
                 if (currentOdd is null)
                 {
-                    // To be hidden
-                    ;
+                    _eventPublisher.TriggerEventForHide(oldOdd.Id);
                 }
                 else
                 {
                     if (!currentOdd.Value.Equals(oldOdd.Value))
                     {
-                        // Send notification
-                        ;
+                        var updateModel = _mapper.Map<OddUpdateModel>(currentOdd);
+                        _eventPublisher.TriggerEventForChanges(updateModel);
                     }
                 }
             }
