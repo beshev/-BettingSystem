@@ -5,6 +5,7 @@
     using Infrastructure.InputModels;
     using Microsoft.EntityFrameworkCore;
     using Models;
+    using System.Collections.Generic;
 
     public class SportsService : ISportsService
     {
@@ -13,10 +14,11 @@
 
         public SportsService(
             ApplicationDbContext dbContext,
+            IEventsService eventsService,
             IMapper mapper)
         {
             _dbContext = dbContext;
-            this._mapper = mapper;
+            _mapper = mapper;
         }
 
         public async Task CreateAsync(SportInputModel model)
@@ -34,21 +36,90 @@
 
         public async Task UpdateAsync(SportInputModel model)
         {
-            // TODO: Finish here!
-            //var sport = await _dbContext.Sports.FirstOrDefaultAsync(x => x.Id.Equals(model.Id));
-            //foreach (var currentEvent in model.Events)
-            //{
-            //    var @event = await _dbContext.Events.FirstOrDefaultAsync(x => x.Id.Equals(currentEvent.Id));
-            //    if (@event is not null)
-            //    {
+            await _dbContext.Database.BeginTransactionAsync();
 
-            //    }
-            //    else
-            //    {
-            //        var newEvent = model.Events.Select
-            //        sport.Events.Add()
-            //    }
-            //}
+            var sport = await _dbContext.Sports.FindAsync(model.Id);
+            _dbContext.Sports.Remove(sport);
+            _dbContext.SaveChanges();
+
+            var newSportRecord = _mapper.Map<Sport>(model);
+            _dbContext.Sports.Add(newSportRecord);
+            _dbContext.SaveChanges();
+
+            await _dbContext.Database.CommitTransactionAsync();
+
+            CheckForMatchesChanges(sport, newSportRecord);
+        }
+
+        private void CheckForMatchesChanges(Sport sport, Sport newSportRecord)
+        {
+            var oldMatches = sport.Events.SelectMany(e => e.Matches);
+            var newMatches = newSportRecord.Events.SelectMany(e => e.Matches);
+            foreach (var oldMatch in oldMatches)
+            {
+                var currentMatch = newMatches.FirstOrDefault(m => m.Id.Equals(oldMatch.Id));
+
+                if (currentMatch is null)
+                {
+                    // To be hidden
+                    ;
+                }
+                else
+                {
+                    if (!currentMatch.StartDate.Equals(oldMatch.StartDate)
+                     || !currentMatch.MatchType.Equals(oldMatch.MatchType))
+                    {
+                        // Send notification
+                        ;
+                    }
+
+                    CheckForBetsChanges(oldMatch.Bets, currentMatch.Bets);
+                }
+            }
+        }
+
+        private void CheckForBetsChanges(IEnumerable<Bet> oldBets, IEnumerable<Bet> newBets)
+        {
+            foreach (var oldBet in oldBets)
+            {
+                var currentBet = newBets.FirstOrDefault(m => m.Id.Equals(oldBet.Id));
+                if (currentBet is null)
+                {
+                    // To be hidden
+                    ;
+                }
+                else
+                {
+                    if (!currentBet.IsLive.Equals(oldBet.IsLive))
+                    {
+                        // Send notification
+                        ;
+                    }
+
+                    CheckForOddsChanges(oldBet.Odds, currentBet.Odds);
+                }
+            }
+        }
+
+        private void CheckForOddsChanges(IEnumerable<Odd> oldOdds, IEnumerable<Odd> newOdds)
+        {
+            foreach (var oldOdd in oldOdds)
+            {
+                var currentOdd = newOdds.FirstOrDefault(m => m.Id.Equals(oldOdd.Id));
+                if (currentOdd is null)
+                {
+                    // To be hidden
+                    ;
+                }
+                else
+                {
+                    if (!currentOdd.Value.Equals(oldOdd.Value))
+                    {
+                        // Send notification
+                        ;
+                    }
+                }
+            }
         }
     }
 }

@@ -1,12 +1,12 @@
 ﻿namespace Infrastructure.Extentions
 {
-    using Data;
     using AutoMapper;
+    using Data;
+    using Infrastructure.Mapping;
     using Infrastructure.Services;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
-    using Infrastructure.Mapping;
 
     public static class ServiceCollectionExtentions
     {
@@ -19,6 +19,10 @@
         public static IServiceCollection AddServices(this IServiceCollection services)
         {
             services.AddTransient<ISportsService, SportsService>();
+            services.AddTransient<IEventsService, EventsService>();
+            services.AddTransient<IMatchesService, MatchesService>();
+            services.AddTransient<IBetsService, BetsService>();
+            services.AddTransient<IOddsService, OddsService>();
 
             return services;
         }
@@ -27,7 +31,7 @@
         {
             var mappingConfig = new MapperConfiguration(config =>
             {
-                config.AddProfile<SportsMappingProfiler>();
+                config.AddProfile<BettingMappingProfiler>();
             });
 
             services.AddSingleton(mappingConfig.CreateMapper());
