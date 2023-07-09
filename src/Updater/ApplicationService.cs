@@ -3,15 +3,20 @@
     using Infrastructure.InputModels;
     using Infrastructure.Services;
     using Microsoft.Extensions.Hosting;
+    using Microsoft.Extensions.Logging;
     using System.Xml.Serialization;
 
     internal class ApplicationService : BackgroundService
     {
         private readonly ISportsService _sportsService;
+        private readonly ILogger _logger;
 
-        public ApplicationService(ISportsService sportsService)
+        public ApplicationService(
+            ISportsService sportsService,
+            ILogger<ApplicationService> logger)
         {
             _sportsService = sportsService;
+            _logger = logger;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -34,10 +39,11 @@
                     await Task.Delay(timeSpan, stoppingToken);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 //TODO: Error handler logic
-                throw;
+                _logger.LogError(ex.Message);
+                _logger.LogError(ex.InnerException?.Message);
             }
 
 
