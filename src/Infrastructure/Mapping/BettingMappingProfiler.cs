@@ -2,6 +2,7 @@
 {
     using AutoMapper;
     using Infrastructure.Constants;
+    using Infrastructure.EventsTriggers.EventsModels;
     using Infrastructure.InputModels;
     using Infrastructure.ViewModels;
     using Models;
@@ -20,19 +21,37 @@
             CreateMap<OddInputModel, Odd>();
 
             CreateMap<Match, MatchViewModel>()
-                .ForMember(dest => dest.Bets, 
+                .ForMember(dest => dest.Bets,
                                    opt => opt.MapFrom(
-                                         src => src.Bets.Where(b => b.Name.Equals(BettingSystemCommonConstants.NameOfMatchWinner) 
-                                                               || b.Name.Equals(BettingSystemCommonConstants.NameOfMapAdvantage) 
-                                                               || b.Name.Equals(BettingSystemCommonConstants.NameOfTotalMapsPlayed))));
+                                         src => src.Bets.Where(b => b.Name.Equals(BettingSystemCommonConstants.NameOfMatchWinner)
+                                                            || b.Name.Equals(BettingSystemCommonConstants.NameOfMapAdvantage)
+                                                            || b.Name.Equals(BettingSystemCommonConstants.NameOfTotalMapsPlayed))));
 
-            CreateMap<Bet, BetViewModel>();
+            CreateMap<Match, MatchViewModel>()
+                .ForMember(dest => dest.Bets,
+                   opt => opt.MapFrom(
+                            src => src.Bets.Where(b => b.Name.Equals(BettingSystemCommonConstants.NameOfMatchWinner)
+                                               || b.Name.Equals(BettingSystemCommonConstants.NameOfMapAdvantage)
+                                               || b.Name.Equals(BettingSystemCommonConstants.NameOfTotalMapsPlayed))));
+
+
+
+            CreateMap<Bet, BetViewModel>()
+                .AfterMap((src, dest) =>
+                {
+                    dest.Odds = dest.Odds.Any(o => o.SpecialBetValue != null)
+                        ? dest.Odds.GroupBy(o => o.SpecialBetValue).FirstOrDefault().ToList()
+                        : dest.Odds;
+                });
+
             CreateMap<Odd, OddViewModel>();
-
-
             CreateMap<Match, MatchDetailsModel>()
                 .ForMember(dest => dest.ActiveBets, opt => opt.MapFrom(src => src.Bets.Where(b => b.IsLive)))
                 .ForMember(dest => dest.InActiveBets, opt => opt.MapFrom(src => src.Bets.Where(b => !b.IsLive)));
+
+            CreateMap<Match, MatchUpdateModel>();
+            CreateMap<Bet, BetUpdateModel>();
+            CreateMap<Odd, OddUpdateModel>();
         }
     }
 }

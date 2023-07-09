@@ -29,11 +29,12 @@
             var targetDate = DateTime.Now.AddHours(24);
             var matches = await _dbContext.Matches
                 .Where(m => m.StartDate >= DateTime.Now && m.StartDate <= targetDate)
-                .ProjectTo<TModel>(_mapper.ConfigurationProvider)
+                .Include(m => m.Bets)
+                .ThenInclude(b => b.Odds)
                 .ToListAsync();
 
-            // TODO: Filter for groups
-            return matches;
+            var result = _mapper.Map<IEnumerable<TModel>>(matches);
+            return result;
         }
 
         public async Task<TModel> GetById<TModel>(int id)
