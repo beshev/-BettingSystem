@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Updater;
 
 var builder = new HostBuilder()
@@ -18,7 +19,10 @@ var builder = new HostBuilder()
         .AddServices()
         .AddAutoMapper()
         .AddEventTriggers()
-        .AddLogging();
+        .AddLogging(builder =>
+        {
+            builder.AddConsole();
+        });
     });
 
 await builder.RunConsoleAsync();
