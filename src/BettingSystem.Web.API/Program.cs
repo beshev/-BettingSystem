@@ -7,7 +7,8 @@ builder.Services.AddSwaggerGen();
 builder.Services
     .AddDatabase(builder.Configuration)
     .AddAutoMapper()
-    .AddServices();
+    .AddServices()
+    .AddEventTriggers();
 
 var app = builder.Build();
 if (app.Environment.IsDevelopment())
