@@ -8,6 +8,7 @@
       "sslPort": 44385
     }
   },
+
   "profiles": {
     "BettingSystem.Web.API": {
       "commandName": "Project",

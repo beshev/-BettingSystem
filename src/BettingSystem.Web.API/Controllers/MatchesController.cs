@@ -1,10 +1,10 @@
-using Infrastructure.Services;
-using Infrastructure.ViewModels;
-using Microsoft.AspNetCore.Mvc;
-using System.Net;
-
 namespace BettingSystem.Web.API.Controllers
 {
+    using Infrastructure.Services;
+    using Infrastructure.ViewModels;
+    using Microsoft.AspNetCore.Mvc;
+    using System.Net;
+
     [ApiController]
     [Route("api/[controller]")]
     public class MatchesController : ControllerBase
