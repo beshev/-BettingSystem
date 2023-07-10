@@ -27,15 +27,6 @@
                                                             || b.Name.Equals(BettingSystemCommonConstants.NameOfMapAdvantage)
                                                             || b.Name.Equals(BettingSystemCommonConstants.NameOfTotalMapsPlayed))));
 
-            CreateMap<Match, MatchViewModel>()
-                .ForMember(dest => dest.Bets,
-                   opt => opt.MapFrom(
-                            src => src.Bets.Where(b => b.Name.Equals(BettingSystemCommonConstants.NameOfMatchWinner)
-                                               || b.Name.Equals(BettingSystemCommonConstants.NameOfMapAdvantage)
-                                               || b.Name.Equals(BettingSystemCommonConstants.NameOfTotalMapsPlayed))));
-
-
-
             CreateMap<Bet, BetViewModel>()
                 .AfterMap((src, dest) =>
                 {

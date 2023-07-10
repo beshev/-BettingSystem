@@ -44,8 +44,6 @@
                 _logger.LogError(ex.Message);
                 _logger.LogError(ex.InnerException?.Message);
             }
-
-
         }
 
         private async Task<XmlSportInputModel> GetAllSportsAsync()
