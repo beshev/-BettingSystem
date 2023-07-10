@@ -41,7 +41,6 @@
             }
             catch (Exception ex)
             {
-                //TODO: Error handler logic
                 _logger.LogError(ex.Message);
                 _logger.LogError(ex.InnerException?.Message);
             }
