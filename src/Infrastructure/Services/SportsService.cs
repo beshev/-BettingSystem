@@ -2,9 +2,9 @@
 {
     using AutoMapper;
     using Data;
+    using Infrastructure.Dto.InputModels;
+    using Infrastructure.Dto.UpdateModels;
     using Infrastructure.Events;
-    using Infrastructure.EventsTriggers.EventsModels;
-    using Infrastructure.InputModels;
     using Microsoft.EntityFrameworkCore;
     using Models;
     using System.Collections.Generic;

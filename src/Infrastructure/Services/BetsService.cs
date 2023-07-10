@@ -2,7 +2,7 @@
 {
     using AutoMapper;
     using Data;
-    using Infrastructure.InputModels;
+    using Infrastructure.Dto.InputModels;
     using Models;
 
     public class BetsService : IBetsService

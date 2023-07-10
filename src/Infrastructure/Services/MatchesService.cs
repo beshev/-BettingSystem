@@ -3,7 +3,7 @@
     using AutoMapper;
     using AutoMapper.QueryableExtensions;
     using Data;
-    using Infrastructure.InputModels;
+    using Infrastructure.Dto.InputModels;
     using Microsoft.EntityFrameworkCore;
     using Models;
 

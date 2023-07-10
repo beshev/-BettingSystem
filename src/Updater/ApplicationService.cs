@@ -1,6 +1,6 @@
 ﻿namespace Updater
 {
-    using Infrastructure.InputModels;
+    using Infrastructure.Dto.InputModels;
     using Infrastructure.Services;
     using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Logging;

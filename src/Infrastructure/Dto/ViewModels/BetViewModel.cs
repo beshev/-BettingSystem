@@ -1,4 +1,4 @@
-﻿namespace Infrastructure.ViewModels
+﻿namespace Infrastructure.Dto.ViewModels
 {
     public class BetViewModel
     {

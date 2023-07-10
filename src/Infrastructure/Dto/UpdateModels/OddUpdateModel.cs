@@ -1,4 +1,4 @@
-﻿namespace Infrastructure.EventsTriggers.EventsModels
+﻿namespace Infrastructure.Dto.UpdateModels
 {
     public class OddUpdateModel : BaseUpdateModel
     {

@@ -2,9 +2,9 @@
 {
     using AutoMapper;
     using Infrastructure.Constants;
-    using Infrastructure.EventsTriggers.EventsModels;
-    using Infrastructure.InputModels;
-    using Infrastructure.ViewModels;
+    using Infrastructure.Dto.InputModels;
+    using Infrastructure.Dto.UpdateModels;
+    using Infrastructure.Dto.ViewModels;
     using Models;
 
     internal class BettingMappingProfiler : Profile

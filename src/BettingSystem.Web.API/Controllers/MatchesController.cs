@@ -1,7 +1,7 @@
 namespace BettingSystem.Web.API.Controllers
 {
+    using Infrastructure.Dto.ViewModels;
     using Infrastructure.Services;
-    using Infrastructure.ViewModels;
     using Microsoft.AspNetCore.Mvc;
     using System.Net;
 
@@ -13,7 +13,7 @@ namespace BettingSystem.Web.API.Controllers
 
         public MatchesController(IMatchesService matchesService)
         {
-            this._matchesService = matchesService;
+            _matchesService = matchesService;
         }
 
         [HttpGet]

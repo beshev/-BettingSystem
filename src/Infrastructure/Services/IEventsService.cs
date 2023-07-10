@@ -1,6 +1,6 @@
 ﻿namespace Infrastructure.Services
 {
-    using Infrastructure.InputModels;
+    using Infrastructure.Dto.InputModels;
 
     public interface IEventsService
     {

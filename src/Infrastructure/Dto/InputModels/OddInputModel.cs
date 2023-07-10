@@ -1,4 +1,4 @@
-﻿namespace Infrastructure.InputModels
+﻿namespace Infrastructure.Dto.InputModels
 {
     using System.Xml.Serialization;
     
