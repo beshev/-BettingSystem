@@ -1,5 +1,6 @@
 namespace BettingSystem.Web.API.Controllers
 {
+    using Infrastructure.Dto.DetailModels;
     using Infrastructure.Dto.ViewModels;
     using Infrastructure.Services;
     using Microsoft.AspNetCore.Mvc;

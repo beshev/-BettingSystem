@@ -8,6 +8,8 @@
 
     internal class ApplicationService : BackgroundService
     {
+        private const string Url = "https://sports.ultraplay.net/sportsxml?clientKey=9C5E796D-4D54-42FD-A535-D7E77906541A&sportId=2357&days=7";
+
         private readonly ISportsService _sportsService;
         private readonly ILogger _logger;
 
@@ -48,14 +50,13 @@
 
         private async Task<XmlSportInputModel> GetAllSportsAsync()
         {
-            var url = "https://sports.ultraplay.net/sportsxml?clientKey=9C5E796D-4D54-42FD-A535-D7E77906541A&sportId=2357&days=7";
             var client = new HttpClient();
-            var httpMassage = new HttpRequestMessage(HttpMethod.Get, url);
+            var httpMassage = new HttpRequestMessage(HttpMethod.Get, Url);
 
             var response = await client.SendAsync(httpMassage);
             if (!response.IsSuccessStatusCode)
             {
-                // Do some logic.
+                //TODO: Do some logic.
             }
 
             var responseAsString = await response.Content.ReadAsStringAsync();

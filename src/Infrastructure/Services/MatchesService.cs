@@ -78,7 +78,7 @@
                 .ToList();
 
             var changedMatches = new List<MatchUpdateModel>();
-            foreach (var newMatch in model)
+            foreach (var newMatch in model.Where(m => !m.MatchType.Equals(Models.Enums.MatchType.OutRight)))
             {
                 var currentMatch = activeMatches.FirstOrDefault(m => m.Id.Equals(newMatch.Id));
                 if (currentMatch is null)
