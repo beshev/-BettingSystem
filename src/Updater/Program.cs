@@ -22,6 +22,7 @@ var builder = new HostBuilder()
         .AddLogging(builder =>
         {
             builder.AddConsole();
+            builder.SetMinimumLevel(LogLevel.Warning);
         });
     });
 

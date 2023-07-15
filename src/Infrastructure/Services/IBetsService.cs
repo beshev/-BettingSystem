@@ -4,6 +4,6 @@
 
     public interface IBetsService
     {
-        Task UpdateAsync(int matchId, BetInputModel model);
+        Task UpdateAsync(int matchId, IEnumerable<BetInputModel> model);
     }
 }

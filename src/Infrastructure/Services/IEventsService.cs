@@ -4,6 +4,6 @@
 
     public interface IEventsService
     {
-        Task UpdateAsync(int sportId, EventInputModel model);
+        Task UpdateAsync(int sportId, IEnumerable<EventInputModel> model);
     }
 }

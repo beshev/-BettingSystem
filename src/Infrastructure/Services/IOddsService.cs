@@ -4,6 +4,6 @@
 
     public interface IOddsService
     {
-        Task UpdateAsync(int betId, OddInputModel model);
+        Task UpdateAsync(int betId, IEnumerable<OddInputModel> model);
     }
 }

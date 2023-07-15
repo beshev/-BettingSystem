@@ -3,6 +3,7 @@
     using AutoMapper;
     using Data;
     using Infrastructure.Dto.InputModels;
+    using Microsoft.EntityFrameworkCore;
     using Models;
 
     public class EventsService : IEventsService
@@ -21,27 +22,49 @@
             _mapper = mapper;
         }
 
-        public async Task UpdateAsync(int sportId, EventInputModel model)
+        public async Task UpdateAsync(int sportId, IEnumerable<EventInputModel> model)
         {
-            var currentEvent = await _dbContext
+            //TODO: The most of the services have almost same logic!
+            //Maybe there is a way to reduce the duplication of the code
+
+            var newEventsIds = new HashSet<int>(model.Select(m => m.Id));
+            var events = await _dbContext
                 .Events
-                .FindAsync(model.Id);
+                .Where(e => e.SportId.Equals(sportId))
+                .ToListAsync();
 
-            if (currentEvent is null)
+            var oldEvents = events
+                .Where(m => !newEventsIds.Contains(m.Id))
+                .ToList();
+
+            foreach (var oldEvent in oldEvents)
             {
-                var newEvent = _mapper.Map<Event>(model);
-                newEvent.SportId = sportId;
-                await _dbContext.Events.AddAsync(newEvent);
-
-                await _dbContext.SaveChangesAsync();
+                oldEvent.IsActive = false;
+                await _matchesService.UpdateAsync(oldEvent.Id, Enumerable.Empty<MatchInputModel>());
             }
-            else
+
+            var activeEvents = events
+                .Where(m => newEventsIds.Contains(m.Id))
+                .ToList();
+
+            foreach (var newEvent in model)
             {
-                foreach (var eventMatch in model.Matches)
+                var currentEvent = activeEvents.FirstOrDefault(e => e.Id.Equals(newEvent.Id));
+                if (currentEvent is null)
                 {
-                    await _matchesService.UpdateAsync(model.Id, eventMatch);
+                    var newEventEntity = _mapper.Map<Event>(newEvent);
+                    newEventEntity.SportId = sportId;
+
+                    await _dbContext.Events.AddAsync(newEventEntity);
+                }
+                else
+                {
+                    currentEvent.IsActive = true;
+                    await _matchesService.UpdateAsync(newEvent.Id, newEvent.Matches);
                 }
             }
+
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

@@ -8,6 +8,6 @@
 
         Task<TModel> GetById<TModel>(int id);
 
-        Task UpdateAsync(int eventId, MatchInputModel model);
+        Task UpdateAsync(int eventId, IEnumerable<MatchInputModel> model);
     }
 }

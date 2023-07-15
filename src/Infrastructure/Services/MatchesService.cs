@@ -4,6 +4,8 @@
     using AutoMapper.QueryableExtensions;
     using Data;
     using Infrastructure.Dto.InputModels;
+    using Infrastructure.Dto.UpdateModels;
+    using Infrastructure.Events;
     using Microsoft.EntityFrameworkCore;
     using Models;
 
@@ -11,15 +13,19 @@
     {
         private readonly ApplicationDbContext _dbContext;
         private readonly IBetsService _betsService;
+        private readonly IEventPublisher _eventPublisher;
         private readonly IMapper _mapper;
 
         public MatchesService(
             ApplicationDbContext dbContext,
             IBetsService betsService,
+            IEventPublisher eventPublisher,
+            IEventSubscriber eventSubscriber,
             IMapper mapper)
         {
             _dbContext = dbContext;
             _betsService = betsService;
+            _eventPublisher = eventPublisher;
             _mapper = mapper;
         }
 
@@ -47,32 +53,63 @@
             return match;
         }
 
-        public async Task UpdateAsync(int eventId, MatchInputModel model)
+        public async Task UpdateAsync(int eventId, IEnumerable<MatchInputModel> model)
         {
-            var matches = _dbContext.Matches;
-            var currentMatch = matches.FirstOrDefault(m => m.Id.Equals(model.Id));
-            if (currentMatch is null)
-            {
-                var newMatch = _mapper.Map<Match>(model);
-                newMatch.EventId = eventId;
-                matches.Add(newMatch);
-            }
-            else
-            {
-                if (!currentMatch.StartDate.Equals(model.StartDate) || !currentMatch.MatchType.Equals(model.MatchType))
-                {
-                    currentMatch.MatchType = model.MatchType;
-                    currentMatch.StartDate = model.StartDate;
+            var newMatchesIds = new HashSet<int>(model.Select(m => m.Id));
+            var matches = await _dbContext
+                .Matches
+                .Where(m => m.EventId.Equals(eventId))
+                .ToListAsync();
 
-                    await _dbContext.SaveChangesAsync();
-                }
+            var oldMatches = matches
+                .Where(m => !newMatchesIds.Contains(m.Id))
+                .ToList();
 
-                var matchBets = model.Bets;
-                foreach (var bet in matchBets)
+            var hiddenMatches = new List<int>();
+            foreach (var oldMatch in oldMatches)
+            {
+                oldMatch.IsActive = false;
+                hiddenMatches.Add(oldMatch.Id);
+                await _betsService.UpdateAsync(oldMatch.Id, Enumerable.Empty<BetInputModel>());
+            }
+
+            var activeMatches = matches
+                .Where(o => newMatchesIds.Contains(o.Id))
+                .ToList();
+
+            var changedMatches = new List<MatchUpdateModel>();
+            foreach (var newMatch in model)
+            {
+                var currentMatch = activeMatches.FirstOrDefault(m => m.Id.Equals(newMatch.Id));
+                if (currentMatch is null)
                 {
-                    await _betsService.UpdateAsync(model.Id, bet);
+                    var newMatchEntity = _mapper.Map<Match>(newMatch);
+                    newMatchEntity.EventId = eventId;
+
+                    await _dbContext.Matches.AddAsync(newMatchEntity);
+                }
+                else
+                {
+                    currentMatch.IsActive = true;
+                    if (!currentMatch.StartDate.Equals(newMatch.StartDate) || !currentMatch.MatchType.Equals(newMatch.MatchType))
+                    {
+                        currentMatch.MatchType = newMatch.MatchType;
+                        currentMatch.StartDate = newMatch.StartDate;
+
+                        _dbContext.Matches.Update(currentMatch);
+
+                        var updateModel = _mapper.Map<MatchUpdateModel>(currentMatch);
+                        changedMatches.Add(updateModel);
+                    }
+
+                    await _betsService.UpdateAsync(newMatch.Id, newMatch.Bets);
                 }
             }
+
+            await _dbContext.SaveChangesAsync();
+
+            _eventPublisher.TriggerEventForChanges(changedMatches);
+            _eventPublisher.TriggerEventForHide(hiddenMatches);
         }
     }
 }
