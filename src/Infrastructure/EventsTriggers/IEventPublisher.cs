@@ -6,8 +6,8 @@
 
         event EventPublisher.EventHandlerHide HideEvent;
 
-        void TriggerEventForChanges<T>(T eventData);
+        void TriggerEventForChanges<T>(IEnumerable<T> eventData);
 
-        void TriggerEventForHide(int id);
+        void TriggerEventForHide(IEnumerable<int> ids);
     }
 }

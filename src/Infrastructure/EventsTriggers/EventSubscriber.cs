@@ -13,9 +13,9 @@
             // Send the new data somewhere :)
         }
 
-        private void HandleEventForHide(int id)
+        private void HandleEventForHide(IEnumerable<int> ids)
         {
-            // Send the id of the element that need to be hide
+            // Send the ids of the elements that need to be hide
         }
     }
 }

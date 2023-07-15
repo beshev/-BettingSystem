@@ -6,26 +6,26 @@
     {
         public delegate void EventHandlerChange(string eventData);
 
-        public delegate void EventHandlerHide(int id);
+        public delegate void EventHandlerHide(IEnumerable<int> ids);
 
         public event EventHandlerChange ChangeEvent;
 
         public event EventHandlerHide HideEvent;
 
-        public void TriggerEventForChanges<T>(T eventData)
+        public void TriggerEventForChanges<T>(IEnumerable<T> eventData)
         {
-            var eventDataAsString = JsonConvert.SerializeObject(eventData);
-            if (ChangeEvent != null)
+            if (ChangeEvent != null && eventData.Any())
             {
+                var eventDataAsString = JsonConvert.SerializeObject(eventData);
                 ChangeEvent.Invoke(eventDataAsString);
             }
         }
 
-        public void TriggerEventForHide(int id)
+        public void TriggerEventForHide(IEnumerable<int> ids)
         {
-            if (ChangeEvent != null)
+            if (ChangeEvent != null && ids.Any())
             {
-                HideEvent.Invoke(id);
+                HideEvent.Invoke(ids);
             }
         }
     }
